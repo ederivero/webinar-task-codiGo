@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client'
-import { adminSeed } from './seeds'
+import { userSeed } from './seeds'
 
 const prisma = new PrismaClient()
 
 async function main() {
-  await Promise.all([adminSeed(prisma)])
+  await Promise.all([userSeed(prisma)])
 }
 
 main()

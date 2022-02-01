@@ -1,2 +1,2 @@
-import adminSeed from './admin.seed'
-export { adminSeed }
+import userSeed from './user.seed'
+export { userSeed }
