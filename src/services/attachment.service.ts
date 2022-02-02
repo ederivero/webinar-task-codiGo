@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid'
 import { plainToClass } from 'class-transformer'
-import { NotFound } from 'http-errors'
+import { NotFound, UnprocessableEntity } from 'http-errors'
 import { s3 } from '../s3'
 import { prisma } from '../prisma'
 import { CreateAttachmentDto } from '../dtos/attachments/request/create-attachment.dto'
@@ -52,10 +52,17 @@ export class AttachmentService {
       throw new NotFound('The task does not have an attachment')
     }
 
-    s3.deleteObject({
-      Bucket: process.env.AWS_BUCKET ?? '',
-      Key: `${attachment.path}/${attachment.key}.${attachment.ext}`,
-    })
+    s3.deleteObject(
+      {
+        Bucket: process.env.AWS_BUCKET ?? '',
+        Key: `${attachment.path}/${attachment.key}.${attachment.ext}`,
+      },
+      (err) => {
+        if (err) {
+          throw new UnprocessableEntity(err?.message)
+        }
+      },
+    )
 
     try {
       await prisma.attachment.delete({ where: { taskId: id } })

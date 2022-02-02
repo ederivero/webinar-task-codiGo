@@ -36,14 +36,14 @@ model Auth {
 }
 
 model Task {
-  id         String       @id @default(uuid())
+  id         String      @id @default(uuid())
   name       String
   status     TaskStatus
   userId     String
-  user       User         @relation(fields: [userId], references: [id])
-  attachment Attachment[]
-  createdAt  DateTime     @default(now()) @map(name: "created_at")
-  updatedAt  DateTime     @updatedAt @map(name: "updated_at")
+  user       User        @relation(fields: [userId], references: [id])
+  attachment Attachment?
+  createdAt  DateTime    @default(now()) @map(name: "created_at")
+  updatedAt  DateTime    @updatedAt @map(name: "updated_at")
 
   @@map(name: "tasks")
 }

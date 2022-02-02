@@ -1,10 +1,11 @@
 import { Task } from '@prisma/client'
-import { NotFound } from 'http-errors'
+import { NotFound, UnprocessableEntity } from 'http-errors'
 import { plainToClass, plainToInstance } from 'class-transformer'
 import { CreateTaskDto } from '../dtos/tasks/request/create-task.dto'
 import { UpdateTaskDto } from '../dtos/tasks/request/update-task.dto'
 import { TaskDto } from '../dtos/tasks/response/task.dto'
 import { prisma } from '../prisma'
+import { s3 } from '../s3'
 import { AttachmentService } from './attachment.service'
 
 export class TasksService {
@@ -17,11 +18,11 @@ export class TasksService {
 
     const tasksWithAttachment = tasks.map((task) => ({
       ...task,
-      attachment: task.attachment[0]
+      attachment: task.attachment
         ? {
-            ...task.attachment[0],
+            ...task.attachment,
             signedUrl: AttachmentService.getSignedUrl(
-              `${task.attachment[0]?.path}/${task.attachment[0]?.key}.${task.attachment[0]?.ext}`,
+              `${task.attachment.path}/${task.attachment.key}.${task.attachment.ext}`,
             ),
           }
         : undefined,
@@ -43,11 +44,11 @@ export class TasksService {
 
     return plainToClass(TaskDto, {
       ...task,
-      attachment: task.attachment[0]
+      attachment: task.attachment
         ? {
-            ...task.attachment[0],
+            ...task.attachment,
             signedUrl: AttachmentService.getSignedUrl(
-              `${task.attachment[0]?.path}/${task.attachment[0]?.key}.${task.attachment[0]?.ext}`,
+              `${task.attachment?.path}/${task.attachment?.key}.${task.attachment?.ext}`,
             ),
           }
         : undefined,
@@ -82,10 +83,20 @@ export class TasksService {
       throw new NotFound(`The task with ${id} does not exist`)
     }
 
-    if (task.attachment.length !== 0) {
-      await AttachmentService.delete(task.id)
+    if (task.attachment) {
+      s3.deleteObject(
+        {
+          Bucket: process.env.AWS_BUCKET ?? '',
+          Key: `${task.attachment.path}/${task.attachment.key}.${task.attachment.ext}`,
+        },
+        (err) => {
+          if (err) {
+            throw new UnprocessableEntity(err?.message)
+          }
+        },
+      )
+      await prisma.attachment.delete({ where: { id: task.attachment.id } })
     }
-
     await prisma.task.delete({ where: { id } })
   }
 }
