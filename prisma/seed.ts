@@ -9,7 +9,8 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error(e)
+    // eslint-disable-next-line no-console
+    console.log(e)
     process.exit(1)
   })
   .finally(async () => await prisma.$disconnect())

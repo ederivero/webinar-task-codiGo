@@ -8,7 +8,7 @@
   "scripts": {
     "start:dev": "dotenv -e .env nodemon src/server.ts",
     "build": "tsc -p .",
-    "start": "node dist/server.js",
+    "start": "node ./dist/src/server.js",
     "format": "prettier --write \"src/**/*.ts\" ",
     "lint": "tsc --project tsconfig.json --noEmit && eslint \"{src,apps,libs,test}/**/*.ts\" --color --max-warnings=0",
     "prisma:migrate:save": "prisma migrate dev --preview-feature --create-only",
