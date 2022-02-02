@@ -36,27 +36,26 @@ model Auth {
 }
 
 model Task {
-  id           String      @id @default(uuid())
-  name         String
-  status       TaskStatus
-  userId       String
-  user         User        @relation(fields: [userId], references: [id])
-  attachmentId String?     @unique
-  attachment   Attachment? @relation(fields: [attachmentId], references: [id])
-  createdAt    DateTime    @default(now()) @map(name: "created_at")
-  updatedAt    DateTime    @updatedAt @map(name: "updated_at")
+  id         String       @id @default(uuid())
+  name       String
+  status     TaskStatus
+  userId     String
+  user       User         @relation(fields: [userId], references: [id])
+  attachment Attachment[]
+  createdAt  DateTime     @default(now()) @map(name: "created_at")
+  updatedAt  DateTime     @updatedAt @map(name: "updated_at")
 
   @@map(name: "tasks")
 }
 
 model Attachment {
   id          String   @id @default(uuid())
-  uuid        String   @unique @default(uuid())
   path        String
   key         String
   ext         String
   contentType String   @map(name: "content_type")
-  tasks       Task[]
+  taskId      String   @unique
+  task        Task     @relation(fields: [taskId], references: [id])
   createdAt   DateTime @default(now()) @map(name: "created_at")
 
   @@map(name: "attachments")

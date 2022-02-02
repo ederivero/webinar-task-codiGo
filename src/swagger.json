@@ -126,7 +126,7 @@
           "201": {
             "description": "Task creada",
             "schema": {
-              "$ref": "#/definitions/TaskResponseMany"
+              "$ref": "#/definitions/TaskResponse"
             }
           }
         },
@@ -147,7 +147,10 @@
         ],
         "responses": {
           "202": {
-            "description": "Lista de las tasks"
+            "description": "Lista de las tasks",
+            "schema": {
+              "$ref": "#/definitions/TaskResponseMany"
+            }
           }
         },
         "security": [
@@ -157,7 +160,7 @@
         ]
       }
     },
-    "/tasks/{id}": {
+    "/task/{id}": {
       "get": {
         "tags": [
           "tasks"
@@ -167,7 +170,7 @@
           {
             "name": "id",
             "in": "path",
-            "description": "Credenciales del usuario",
+            "description": "Id de la task",
             "required": true,
             "type": "string"
           }
@@ -217,6 +220,90 @@
             "schema": {
               "$ref": "#/definitions/TaskResponse"
             }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Elimina una task",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id de la task",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "operationId": "deleteTask",
+        "responses": {
+          "204": {
+            "description": "Task eliminada"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/attachment": {
+      "post": {
+        "tags": [
+          "attachments"
+        ],
+        "summary": "Crea un link para subir el archivo a un bucket",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Credenciales del usuario",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/NewAttachment"
+            }
+          }
+        ],
+        "operationId": "createAttachment",
+        "responses": {
+          "201": {
+            "description": "Attachment creado"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/attachment/{id}": {
+      "delete": {
+        "tags": [
+          "attachments"
+        ],
+        "summary": "Eliminar el attachment del bucket y de la base de datos",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Id de la task",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "operationId": "deleteAttachment",
+        "responses": {
+          "204": {
+            "description": "Fue exitoso"
           }
         },
         "security": [
@@ -316,6 +403,35 @@
             "DOING",
             "DONE"
           ]
+        },
+        "attachment": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            },
+            "ext": {
+              "type": "string"
+            },
+            "contentType": {
+              "type": "string"
+            },
+            "taskId": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string"
+            },
+            "signedUrl": {
+              "type": "string"
+            }
+          }
         }
       }
     },
@@ -336,7 +452,67 @@
               "DOING",
               "DONE"
             ]
+          },
+          "attachment": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "ext": {
+                "type": "string"
+              },
+              "contentType": {
+                "type": "string"
+              },
+              "taskId": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string"
+              },
+              "signedUrl": {
+                "type": "string"
+              }
+            }
           }
+        }
+      }
+    },
+    "NewAttachment": {
+      "type": "object",
+      "properties": {
+        "contentType": {
+          "type": "string",
+          "enum": [
+            "image/png",
+            "image/jpg",
+            "image/jpeg"
+          ]
+        },
+        "ext": {
+          "type": "string",
+          "enum": [
+            "png",
+            "jpg",
+            "jpeg"
+          ]
+        },
+        "parentType": {
+          "type": "string",
+          "example": "TASK"
+        },
+        "filename": {
+          "type": "string"
+        },
+        "taskId": {
+          "type": "string"
         }
       }
     }

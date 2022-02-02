@@ -33,7 +33,7 @@ export async function findOne(req: Request, res: Response): Promise<void> {
     throw new Unauthorized('Incorrect user')
   }
 
-  const task = await TasksService.findOne(req.params.uuid, req.user.id)
+  const task = await TasksService.findOne(req.params.id, req.user.id)
 
   res.status(200).json(plainToClass(TaskDto, task))
 }
@@ -49,4 +49,14 @@ export async function update(req: Request, res: Response): Promise<void> {
   const user = await TasksService.update(req.params.id, dto, req.user.id)
 
   res.status(200).json(plainToClass(TaskDto, user))
+}
+
+export async function deleteTask(req: Request, res: Response): Promise<void> {
+  if (!req.user) {
+    throw new Unauthorized('Incorrect user')
+  }
+
+  await TasksService.delete(req.params.id, req.user.id)
+
+  res.status(204).send()
 }

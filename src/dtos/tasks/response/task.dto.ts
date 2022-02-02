@@ -1,5 +1,6 @@
 import { Exclude, Expose } from 'class-transformer'
 import { TaskStatusEnum } from '../../../enums'
+import { AttachmentDto } from '../../attachments/response/attachment.dto'
 
 @Exclude()
 export class TaskDto {
@@ -13,5 +14,5 @@ export class TaskDto {
   readonly status: TaskStatusEnum
 
   @Expose()
-  readonly attachment: any
+  readonly attachment: AttachmentDto
 }
