@@ -2,6 +2,7 @@ import { plainToClass } from 'class-transformer'
 import { Request, Response } from 'express'
 import { UnprocessableEntity } from 'http-errors'
 import { LoginDto } from '../dtos/user/request/login.dto'
+import { RegisterDto } from '../dtos/user/request/register.dto'
 import { UserWithAccessTokenDto } from '../dtos/user/response/user-token.dto'
 import { UserService } from '../services/user.service'
 
@@ -23,4 +24,12 @@ export async function logout(req: Request, res: Response): Promise<void> {
 
   await UserService.logout(req.headers.authorization.split(' ')[1])
   res.status(204).send()
+}
+
+export async function register(req: Request, res: Response): Promise<void> {
+  const dto = plainToClass(RegisterDto, req.body)
+  await dto.isValid()
+
+  const data = await UserService.register(dto)
+  res.status(201).json(data)
 }
