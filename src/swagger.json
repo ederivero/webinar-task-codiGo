@@ -1,0 +1,348 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Documentacion de la API de webinar '_Webinar Organizador de Tareas con autenticación_' realizado en [Express](https://expressjs.com/) con el uso del ORM [Prisma](https://www.prisma.io/) usando una base de datos en [PostgreSQL](https://postgresql.com/)",
+    "version": "1.0.0",
+    "title": "Webinar Organizador de Tareas con autenticación",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "ederiveroman@gmail.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "webinar-task-codigo.herokuapp.com",
+  "basePath": "/api/v1",
+  "tags": [
+    {
+      "name": "user",
+      "description": "Todo con relacionado a los usuarios y autenticación"
+    },
+    {
+      "name": "tasks",
+      "description": "Relacionado con todo el mantenimiento de las task de un usuario correspondiente"
+    },
+    {
+      "name": "attachments",
+      "description": "Relacionado con el manejo de imagenes para las tasks"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/user/login": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Autenticacion de un usuario",
+        "description": "",
+        "operationId": "login",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Credenciales del usuario",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Login"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invalid input",
+            "schema": {
+              "$ref": "#/definitions/LoginResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/user/logout": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Deshabilitar la token del usuario",
+        "operationId": "logout",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/tasks": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Crea una nueva task",
+        "operationId": "taskCreate",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Credenciales del usuario",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Task creada",
+            "schema": {
+              "$ref": "#/definitions/TaskResponseMany"
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Devuelve todas las tasks del usuario",
+        "operationId": "tasks",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "202": {
+            "description": "Lista de las tasks"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/tasks/{id}": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Devuelve una task",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Credenciales del usuario",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "operationId": "task",
+        "responses": {
+          "200": {
+            "description": "La task encontrada",
+            "schema": {
+              "$ref": "#/definitions/TaskResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "tasks"
+        ],
+        "summary": "Actualiza parte de la task",
+        "operationId": "patchTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Credenciales del usuario",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Credenciales del usuario",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Task"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Task actualizada",
+            "schema": {
+              "$ref": "#/definitions/TaskResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "Bearer <YOUR_TOKEN>"
+    }
+  },
+  "definitions": {
+    "Login": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginResponse": {
+      "type": "object",
+      "properties": {
+        "accessToken": {
+          "type": "string"
+        },
+        "refreshToken": {
+          "type": "string"
+        },
+        "expiresAt": {
+          "type": "string"
+        },
+        "refreshExpiresAt": {
+          "type": "string"
+        },
+        "user": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "fullName": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            },
+            "createdAt": {
+              "type": "string"
+            },
+            "updatedAt": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "Task": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "TODO",
+            "DOING",
+            "DONE"
+          ]
+        }
+      }
+    },
+    "TaskResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "TODO",
+            "DOING",
+            "DONE"
+          ]
+        }
+      }
+    },
+    "TaskResponseMany": {
+      "type": "array",
+      "items": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "TODO",
+              "DOING",
+              "DONE"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

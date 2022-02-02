@@ -3,6 +3,8 @@ import express, { NextFunction, Request, Response } from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 import { HttpError } from 'http-errors'
+import swagger from 'swagger-ui-express'
+import swaggerDocument from './swagger.json'
 import { router } from './router'
 
 const app = express()
@@ -36,7 +38,7 @@ app.use(cors())
 app.get('/api/v1/status', (req: Request, res: Response) => {
   res.json({ time: new Date() })
 })
-
+app.use('/api/docs', swagger.serve, swagger.setup(swaggerDocument))
 app.use('/', router(app))
 
 app.use(errorHandler)
